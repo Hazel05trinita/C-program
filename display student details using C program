@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <string.h>
+struct Student {
+ char name[100];
+ int roll_no;
+ int marks;
+};
+void storeStudentDetails(FILE *file, struct Student student) {
+ fprintf(file, "%s,%d,%d\n", student.name, student.roll_no, student.marks);
+}
+void retrieveStudentDetails(FILE *file) {
+ struct Student student;
+ fseek(file, 0, SEEK_SET); 
+ printf("Student Details:\n");
+ while (fscanf(file, "%[^,],%d,%d\n", student.name, &student.roll_no, &student.marks) != EOF) {
+ printf("Name: %s, Roll No: %d, Marks: %d\n", student.name, student.roll_no, student.marks);
+ }
+}
+int main() {
+ FILE *file;
+ file = fopen("student_data.txt", "a+"); 
+ if (file == NULL) {
+ perror("Error opening the file");
+ return 1;
+ }
+ int choice;
+ struct Student student;
+ do {
+ printf("\n1. Add Student Details\n");
+ printf("2. Retrieve and Display Student Details\n");
+ printf("3. Exit\n");
+ printf("Enter your choice: ");
+ scanf("%d", &choice);
+ switch (choice) {
+ case 1:
+ printf("Enter Name: ");
+ scanf(" %[^\n]s", student.name); 
+ printf("Enter Roll No: ");
+ scanf("%d", &student.roll_no);
+ printf("Enter Marks: ");
+ scanf("%d", &student.marks);
+ 
+ storeStudentDetails(file, student);
+ break;
+ case 2:
+ retrieveStudentDetails(file);
+ break;
+ case 3:
+ break;
+ default:
+ printf("Invalid choice. Please enter a valid option.\n");
+ }
+ } while (choice != 3);
+ fclose(file);
+ return 0;
+}
